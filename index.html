@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
+  <script src="http://datamaps.github.io/scripts/datamaps.world.min.js"></script>
+  <div id="container" style="position: relative; width: 80%; max-height: 450px;"></div>
+ 
+  <script>
+    // Initial map configuration
+    var clickedCountries = new Set(); // Object to keep track of clicked countries
+    var map = new Datamap({
+      scope: 'world',
+      element: document.getElementById('container'),
+      height: 500,
+      fills: {
+        //defaultFill: '#000000',
+        clickedFill: 'red', // New fill color for clicked countries
+        unclickedFill: 'blue'
+      },
+      // Default fill for all countries
+      data: {},
+      done: function(datamap) {
+        // Add click event listener to each country
+        datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+          //alert(geography.properties.name);
+          // Toggle between 'clickedFill' and 'defaultFill'
+          if (clickedCountries.has(geography.id)) {
+            // Reset to default fill
+            //alert(geography.properties.name);
+            
+            map.updateChoropleth({
+              [geography.id]: {fillKey: 'unclickedFill'}
+            });
+            clickedCountries.delete(geography.id);
+          } else {
+            // Change to clicked fill
+            //alert(geography.properties.name);
+            map.updateChoropleth({
+              [geography.id]: {fillKey: 'clickedFill'}
+            });
+            clickedCountries.add(geography.id);
+          }
+        });
+      }
+    });
+  </script>
+</body>
